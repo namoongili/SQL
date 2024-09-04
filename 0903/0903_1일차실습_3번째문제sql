@@ -38,14 +38,15 @@ select ID, trunc(ANNL_PERF, 0)
 from CUST_INFO;
 
 --6. <날짜함수> 현재날짜를 조회하시오
-select sysdate from dual;
+select SYSDATE  FROM DUAL;
+select TO_CHAR(SYSDATE ,'YYYY') FROM DUAL;
 
 --7. <조건식> 고객테이블로부터 주민번호, 수익이 300이상이면 고수익, 100이상은 일반수익, 0이하이면 손해 , 나머지는 변동없음 내용이 RESULT컬럼명으로 조회될 수 있도록 하시오
 select ID, case when ANNL_PERF >= 300 then '고수익'
                 when ANNL_PERF >= 100 then '일반수익'
                 when ANNL_PERF <= 0 then '손해'
                 else '변동없음'
-                end as RESULT 
+                end RESULT 
 from CUST_INFO;
 
 --8. 고객테이블로부터 이름과 포인트를 조회하시오 (단 포인트가 적립되지 않은 고객은 0으로 표시되도록 하시오)  힌트:NVL 함수 사용
