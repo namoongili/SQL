@@ -1,0 +1,50 @@
+select name, substr( name, 1, 2), id from student;
+select name, replace (name, substr(name, 1, 2), '**') from student;
+
+-- 복수형 함수(집계함수)
+-- sum(), avg(), max(), min(), count()
+
+select *
+from member_tbl_11;
+
+select *
+from CUST_INFO;
+
+select substr( id,7,1 )
+from CUST_INFO;
+
+select decode( substr( id,7,1) ,1,'남성',2,'여성')
+from CUST_INFO;
+
+select id, decode( substr( id,7,1) ,1,'남성',2,'여성')
+from CUST_INFO;
+
+--sum() : 전체행에 대해서 합계를 구함 ( sum에서 null 제외시켜줌 )
+select m_point from member_tbl_11;
+select sum(m_point) from member_tbl_11;
+
+--avg()
+select avg(m_point) from member_tbl_11;
+
+--avg() : 전체 행에 대해서 평균을 구함 (null 제외됨)
+-- sqld 시험에서 null 관련된 문제 많이 출제됨
+select avg(m_point) from member_tbl_11;
+
+--max : 전체 행에 대해서 가장 큰 값을 구함 ( null 제외됨 )
+select max(m_point)
+from member_tbl_11;
+
+--min : 전체 행에 대해서 가장 작은 값을 구함( null 제외됨 )
+select min(m_point)
+from member_tbl_11;
+
+--count() 함수 : 형의 개수를 구함
+--count(*)
+--count(컬럼명)
+
+select m_point
+from member_tbl_11;
+
+--null 상관없이 행의 개수를 구함
+select count(*)
+from member_tbl_11;

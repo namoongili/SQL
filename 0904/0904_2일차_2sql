@@ -1,0 +1,183 @@
+create table tbl_test_customer(
+    id varchar2(20) not null primary key ,
+    name varchar2(20) ,
+    address varchar2(20),
+    tel varchar2(20)
+);
+
+create table tbl_test_goods(
+  pcode varchar2(20) not null primary key,
+  pname varchar(20) ,
+  price number(4)
+);
+
+create table tbl_test_order(
+  ocode varchar2(20) not null primary key,
+  odate date,
+  id varchar2(20),
+ pcode varchar2(20),
+ sale_cnt number(6)
+);
+
+
+
+insert into tbl_test_customer values( 'H001' ,'김도현', '라스베가스', '010-3030-2222');
+insert into tbl_test_customer values( 'H002' ,'김무궁', 'L.A', '010-2424-2222');
+insert into tbl_test_customer values( 'H003' ,'정보란', '워싱턴D.C', '010-1010-2121');
+insert into tbl_test_customer values( 'H004' ,'김세현', '뉴욕', '010-3333-2222');
+insert into tbl_test_customer values( 'H005' ,'이효진', '텍사스', '010-9090-2222');
+
+
+
+ 
+
+
+insert into tbl_test_goods values('P001' ,'쫀드기', 1000);
+insert into tbl_test_goods values('P002' ,'눈깔사탕', 100);
+insert into tbl_test_goods values('P003' ,'아폴로', 200);
+insert into tbl_test_goods values('P004' ,'뻥튀기', 2000);
+
+
+
+insert into tbl_test_order values('J001' , '20210110' , 'H001', 'P001', 2);
+insert into tbl_test_order values('J002' , '20210110' , 'H002', 'P002', 5);
+insert into tbl_test_order values('J003' , '20210110' , 'H003', 'P003', 2);
+insert into tbl_test_order values('J004' , '20210110' , 'H004', 'P004', 1);
+insert into tbl_test_order values('J005' , '20210110' , 'H005', 'P002', 3);
+insert into tbl_test_order values('J006' , '20210110' , 'H001', 'P002', 3);
+insert into tbl_test_order values('J007' , '20210110' , 'H002', 'P001', 1);
+insert into tbl_test_order values('J008' , '20210110' , 'H001', 'P002', 4);
+insert into tbl_test_order values('J009' , '20210110' , 'H006', 'P002', 4);
+
+
+select *
+from tbl_test_order o
+join tbl_test_customer c
+on o.id = c.id
+join tbl_test_goods g
+on o.pcode = g.pcode;
+
+--주문정보조회하기
+select * from tbl_test_order;
+--제품정보가 함께 조회되도록하기
+
+--equi 조인 (동등조인) : 일치하는 것끼리 조인
+select *
+from tbl_test_order o
+join tbl_test_goods g
+on o.pcode = g.pcode;
+
+select ocode, g.pname, g.price, o.sale_cnt, g.pname, g.price * o.sale_cnt
+from tbl_test_order o
+join tbl_test_goods g
+on o.pcode = g.pcode;
+
+select g.pname, g.price*o.sale_cnt
+from tbl_test_order o
+join tbl_test_goods g
+on o.pcode = g.price ;
+
+
+select g.pname, sum(g.price*o.sale_cnt)
+from tbl_test_order o
+join tbl_test_goods g
+on o.pcode = g.price
+group by g.pname;
+
+
+select * from tbl_test_customer;
+select * from tbl_test_goods;
+select * from tbl_test_order;
+
+select c.name, g.pname, o.sale_cnt, o.odate
+from tbl_test_order o
+join tbl_test_goods g
+on o.pcode = g.pcode
+join tbl_test_customer c
+on o.id = c.id;
+
+-- 주문정보조회, 고객정보가 포함되도록
+select *
+from tbl_test_order o
+join tbl_test_customer c
+on o.id = c.id;
+
+-- 주문정보조회, 상품정보가 포함되도록
+select *
+from tbl_test_order o
+join tbl_test_goods g
+on o.pcode = g.pcode;
+
+
+
+select o.odate, c.name, g.pname, g.price * o.sale_cnt
+from tbl_test_order o
+join tbl_test_customer c
+on o.id = c.id
+join tbl_test_goods g
+on o.pcode = g.pcode;
+
+delete  from tbl_test_order  where id ='H006' ;
+
+select * from tbl_test_customer;
+
+-- 교재 231 예1, 예2
+-- 페이지 254 1번 2번
+
+-- 사용 예 1 (오라클 조인)
+select e.empno, e.ename, d.dname
+from emp e, dept d
+where e.deptno = d.deptno;
+-- 사용 예 1-2 (표준 조인)
+select e.empno, e.ename, d.dname
+from emp e join dept d
+on e.deptno = d.deptno;
+
+-- 사용 예 2 (오라클 조인)
+select s.name "STU_NAME", p.name "PROF_NAME"
+from student s, professor p
+where s.profno = p.profno;
+-- 사용 예 2-1 (표준 조인)
+select s.name "STU_NAME", p.name "PROF_NAME"
+from student s join professor p
+on s.profno = p.profno;
+
+-- 연습문제 1번
+
+select * from student;
+select * from department ;
+
+
+select *
+from student  s 
+join department d
+on  s.deptno1 = d.deptno;
+
+
+select s.name, s.deptno1, d.dname
+from student  s 
+join department d
+on  s.deptno1 = d.deptno;
+
+
+--nvl
+select ename, comm, NVL(comm, 0), NVL(comm,100)
+from emp
+where deptno = 30;
+
+--nvl2
+select empno, ename, sal, comm, NVL2(comm, sal+comm, sal*0) "NVL2"
+from emp
+where deptno = 30;
+
+
+-- decode_1
+select deptno, name, decode(deptno, 101, 'Computer Engineering' ) "DNAME"
+from professor;
+
+-- decode_2
+select deptno, name
+
+
+
+

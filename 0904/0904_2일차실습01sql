@@ -1,0 +1,526 @@
+select name, substr( name, 1, 2), id from student;
+select name, replace (name, substr(name, 1, 2), '**') from student;
+
+-- 복수형 함수(집계함수)
+-- sum(), avg(), max(), min(), count()
+
+select *
+from member_tbl_11;
+
+select *
+from CUST_INFO;
+
+select substr( id,7,1 )
+from CUST_INFO;
+
+select decode( substr( id,7,1) ,1,'남성',2,'여성')
+from CUST_INFO;
+
+select id, decode( substr( id,7,1) ,1,'남성',2,'여성')
+from CUST_INFO;
+
+--sum() : 전체행에 대해서 합계를 구함 ( sum에서 null 제외시켜줌 )
+select m_point from member_tbl_11;
+select sum(m_point) from member_tbl_11;
+
+--avg()
+select avg(m_point) from member_tbl_11;
+
+--avg() : 전체 행에 대해서 평균을 구함 (null 제외됨)
+-- sqld 시험에서 null 관련된 문제 많이 출제됨
+select avg(m_point) from member_tbl_11;
+
+--max : 전체 행에 대해서 가장 큰 값을 구함 ( null 제외됨 )
+select max(m_point)
+from member_tbl_11;
+
+--min : 전체 행에 대해서 가장 작은 값을 구함( null 제외됨 )
+select min(m_point)
+from member_tbl_11;
+
+--count() 함수 : 형의 개수를 구함
+--count(*)
+--count(컬럼명)
+
+select m_point
+from member_tbl_11;
+
+--null 상관없이 행의 개수를 구함
+select count(*)
+from member_tbl_11;
+
+
+--그룹화하기
+--고객등급별 포인트 금액 합계
+select m_point
+from member_tbl_11;
+
+--전체합계
+select sum(m_point)
+from member_tbl_11;
+
+--고객등급별 합계
+select m_grade, sum(m_point)
+from member_tbl_11
+group by m_grade;
+
+select m_grade, sum(m_point)
+from member_tbl_11
+group by m_grade;
+
+--그룹화된 결과내에서 조건에 맞는 행에 추출하고 싶을때
+--having 사용하기
+--having 절은 반드시 group by 된 경우만 사용가능
+ 
+select m_grade, sum(m_point)
+from member_tbl_11
+group by m_grade
+having sum(m_point) >= 5000;
+
+--등급별 포인트금액 구하기(5000점 이상인것만 조회하기) !! 별칭을 사용할 때 주의하기 !! 별칭을 준 이후부터 사용 가능함
+--select m_grade, sum(m_point) as amt
+--from member_tbl_11
+--group by m_grade
+--having amt >= 5000;  --별칭(amt)사용해서 조건을 주는것을 시도!!
+
+--select 쿼리에서 (조회커리에 실행의 순서가 있다. !)
+
+select m_grade, sum(m_point) as amt
+from member_tbl_11
+group by m_grade
+having sum(m_point) >= 5000;
+
+--정렬하기
+select m_grade, sum(m_point) as amt
+from member_tbl_11
+group by m_grade
+having sum(m_point) >= 5000
+order by amt desc;
+
+
+--정렬시에 컬럼명, 별칭, 조회순번 사용 가능
+select m_grade, sum(m_point) as amt
+from member_tbl_11
+group by m_grade
+having sum(m_point) >= 5000
+order by 2 ;
+
+--1) --emp테이블 사용해서 부서별 급여의 평균을 구하시오
+--avg() : 전체 행에 대해서 평균을 구함 (null 제외됨)
+select deptno, avg(sal)
+from emp
+group by deptno;
+
+--2) 1번 문제에서 평균 급여가 2000 이상인 것만 구하시오
+select deptno, avg(sal)
+from emp
+group by deptno
+having avg(sal) >=2000;
+
+
+
+--sql 네번째
+CREATE TABLE STUD_SCORE(
+  STUDENT_ID        VARCHAR2(13) NOT NULL PRIMARY KEY ,
+  MATH_SCORE      NUMBER(5) ,
+  ENG_SCORE        NUMBER(5)   ,
+  PHIL_SCORE       NUMBER(5)   ,
+  MUSIC_SCORE    NUMBER(5) 
+);
+COMMIT;
+
+
+INSERT INTO  STUD_SCORE ( STUDENT_ID , MATH_SCORE,   ENG_SCORE, PHIL_SCORE , MUSIC_SCORE)   VALUES ('0123511' , 89,78,78,90);
+INSERT INTO  STUD_SCORE ( STUDENT_ID , MATH_SCORE,   ENG_SCORE,  MUSIC_SCORE)   VALUES ('0255475' , 88,90,90);
+INSERT INTO  STUD_SCORE ( STUDENT_ID , MATH_SCORE  , MUSIC_SCORE)   VALUES ('9921100' , 87,98);
+INSERT INTO  STUD_SCORE ( STUDENT_ID , MATH_SCORE, ENG_SCORE, PHIL_SCORE , MUSIC_SCORE)   VALUES ('9732453' , 69,98,78,78);
+INSERT INTO  STUD_SCORE ( STUDENT_ID , MATH_SCORE, ENG_SCORE, PHIL_SCORE )   VALUES ('0578981' , 59,90,89);
+INSERT INTO  STUD_SCORE ( STUDENT_ID , MATH_SCORE, ENG_SCORE, PHIL_SCORE , MUSIC_SCORE)   VALUES ('0768789' , 94,80,87,99);
+INSERT INTO  STUD_SCORE ( STUDENT_ID , MATH_SCORE, ENG_SCORE, PHIL_SCORE , MUSIC_SCORE)   VALUES ('9824579' , 90,90,78,87);
+INSERT INTO  STUD_SCORE ( STUDENT_ID , MATH_SCORE, ENG_SCORE, PHIL_SCORE )   VALUES ('0565789' , 58,64,72);
+
+
+
+commit;
+
+-- 문제1) STUD_SCORE 테이블을 사용하여  NULL값을 포함한 행의 개수를 세보자
+select count(*)
+from STUD_SCORE
+where MATH_SCORE is null
+or ENG_SCORE is null
+or PHIL_SCORE is null
+or MUSIC_SCORE is null;
+
+
+-- 문제2)  STUD_SCORE 테이블을 사용하여 NULL값을 제외한 제외한 음악 점수 보유자를 세보자
+select count(MUSIC_SCORE)
+from STUD_SCORE;
+
+
+-- 문제3) STUD_SCORE 테이블을 사용하여 수학 점수의 총 합계를 구해보자
+select sum(MATH_SCORE) 
+from STUD_SCORE;
+
+
+-- 문제4) STUD_SCORE 테이블을사용하여 음악 점수의 평균을 구해보자
+select avg(MUSIC_SCORE)
+from STUD_SCORE;
+
+
+-- 문제5) STUD_SCORE 테이블을 사용하여 수학점수 최댓값 및 최솟값을 구해보자
+select max(MATH_SCORE), min(MATH_SCORE)
+from STUD_SCORE;
+
+
+
+
+-- 조건문 이해하기
+CREATE TABLE STAFF_SAL(
+  ID         VARCHAR2(13) NOT NULL PRIMARY KEY ,
+  JOB       VARCHAR2(13) ,
+  CURRENT_SAL      NUMBER(10)   ,
+  ENG_SCORE        NUMBER(5)    
+);
+COMMIT;
+
+
+INSERT INTO  STAFF_SAL    VALUES ('2148', 'OFFICER' , 40000, 90);
+INSERT INTO  STAFF_SAL    VALUES ('5780', 'CLERK' , 32000, 98);
+INSERT INTO  STAFF_SAL    VALUES ('6870', 'MANAGER' , 100000, 81);
+INSERT INTO  STAFF_SAL    VALUES ('4565', 'CLERK' , 30000, 79);
+INSERT INTO  STAFF_SAL    VALUES ('9687', 'CLERK' , 33000, 66);
+INSERT INTO  STAFF_SAL    VALUES ('7337', 'MANAGER' , 100000, 95);
+INSERT INTO  STAFF_SAL    VALUES ('1321', 'OFFICER' , 43000, 80);
+INSERT INTO  STAFF_SAL    VALUES ('9896', 'CLERK' , 30000, 50);
+
+
+-- 문제 6) CLERK는 7% , OFFICER는 5% , MANAGER는 3%로 연봉을 인상하기로 했다. STAFF_SAL테이블을 사용하여 각 직원별 인상 연봉을  예상해보자 ( CASE WEHN  사용해보기 )(현재연봉을 기준으로 직위별 예상연봉을 구해보자)
+select ID, JOB, CURRENT_SAL, case when JOB = 'CLERK' then CURRENT_SAL * 1.07
+                                  when JOB = 'OFFICER' then CURRENT_SAL * 1.05
+                                  when JOB = 'MANAGER' then CURRENT_SAL * 1.03
+                                  else CURRENT_SAL
+                                  end as EXPECT_SAL
+                                  from STAFF_SAL;
+
+
+
+CREATE TABLE PRC(
+CUST_ID      VARCHAR2(13) NOT NULL PRIMARY KEY ,
+SET2            VARCHAR2(13) ,
+CARD_FLAG     NUMBER(1)   ,
+LOAN_FLAG     NUMBER(1)   ,
+INSURANCE_FLAG     NUMBER(1)   ,
+CTB_FLAG     NUMBER(1)   ,
+FUND_FLAG    NUMBER(1)   ,
+ANNL_REV   NUMBER(10)      
+);
+COMMIT;
+
+INSERT INTO  PRC    VALUES ('546515' , 'SILVER' , 1,1,1,1,1,1000);
+INSERT INTO  PRC    VALUES ('46780' , 'GOLD' , 0,0,1,1,0,20000);
+INSERT INTO  PRC    VALUES ('237848' , 'GOLD' , 1,1,0,1,1,30000);
+INSERT INTO  PRC    VALUES ('56432' , 'DIAMOND' , 1,0,1,1,1,10000);
+INSERT INTO  PRC    VALUES ('89647' , 'SILVER' , 0,0,1,1,0,3000);
+INSERT INTO  PRC    VALUES ('52333' , 'SILVER' , 1,1,0,1,0,2500 );
+INSERT INTO  PRC    VALUES ('89669' , 'GOLD' , 1,0,1,1,0,60000);
+INSERT INTO  PRC    VALUES ('21004' , 'SILVER' , 0,0,1,1,0,1000);
+INSERT INTO  PRC    VALUES ('17890' , 'DIAMOND' , 1,1,0,1,0,300000);
+COMMIT; 
+
+
+-- 문제1) PRC 테이블을 사용하여 고객등급별 인당 평균 연 수익을 계산해 보자( GROUP BY 사용)
+--select set as CUSTOMER_GRADE,
+--    avg(ANNL_REV) as AVERAGE_ANNUAL_REVENUE
+--from PRC
+--group by set;
+
+select SET2, ANNL_REV
+from PRC;
+
+select SET2, round(avg (ANNL_REV),1)
+from PRC
+group by SET2;
+
+
+-- 문제 2) PRC  테이블을 사용하여 고객등급별 고객 수를 확인해보자
+--select 
+--    set as CUSTOMER_GRADE,
+--    count(CUST_ID) as NUMBER_OF_CUSTOMERS
+--from PRC
+--group by set;
+
+select * from PRC;
+select count(set2);
+
+
+
+
+CREATE TABLE   PROD_SALES(
+CUST_NM         VARCHAR2(13)  ,
+PRD_ID             VARCHAR2(5) ,
+SALES_AMT       NUMBER(10)      
+);
+COMMIT;
+
+INSERT INTO   PROD_SALES   VALUES ('LEE', 546 , 3000);
+INSERT INTO   PROD_SALES   VALUES ('KIM', 326 , 4780);
+INSERT INTO   PROD_SALES   VALUES ('KANG', 564 , 87900);
+INSERT INTO   PROD_SALES   VALUES ('KWON', 556 , 45478);
+INSERT INTO   PROD_SALES   VALUES ('KIM', 254 , 3000);
+INSERT INTO   PROD_SALES   VALUES ('YOO', 567 , 78900);
+INSERT INTO   PROD_SALES   VALUES ('PARK', 877 , 89787);
+INSERT INTO   PROD_SALES   VALUES ('LEE', 890 , 10000);
+INSERT INTO   PROD_SALES   VALUES ('KIM', 787 , 2341);
+INSERT INTO   PROD_SALES   VALUES ('PARK', 566 , 50000);
+
+
+
+
+-- 문제 3) 구매횟수가 두 번 이상인 고객에게 마케팅을 하려고 한다. 마케팅 대상자의  고객이름을 조회하시오
+select CUST_NM, count(CUST_NM)
+from PROD_SALES
+group by CUST_NM
+having count(*) >= 2;
+
+
+
+
+-- 문제 4) 구매금액의 합이 7만원 이상인 고객에게 마케팅을 하려고 한다. 마케팅 대상자는 누구일까
+
+select CUST_NM, sum(sales_amt)
+from PROD_SALES
+group by CUST_NM
+having sum(SALES_AMT) >= 70000;
+
+
+
+
+
+create table professor
+(profno number(4) primary key,
+ name  varchar2(20) not null, 
+ id  varchar2(15) not null,
+ position varchar2 (30) not null,
+ pay number (3) not null,
+ hiredate  date not null,
+ bonus number(4) ,
+ deptno  number(3),
+ email  varchar2(50),
+ hpage  varchar2(50)) 
+tablespace example;
+
+insert into professor
+values(1001,'Audie Murphy','Murphy','a full professor',550,to_date('1980-06-23','YYYY-MM-DD'),100,101,'captain@abc.net','http://www.abc.net');
+
+insert into professor
+values(1002,'Angela Bassett','Bassett','assistant professor',380,to_date('1987-01-30','YYYY-MM-DD'),60,101,'sweety@abc.net','http://www.abc.net');
+
+insert into professor
+values (1003,'Jessica Lange','Lange','instructor',270,to_date('1998-03-22','YYYY-MM-DD'),null,101,'pman@power.com','http://www.power.com');
+
+insert into professor
+values (2001,'Winona Ryder','Ryder','instructor',250,to_date('2001-09-01','YYYY-MM-DD'),null,102,'lamb1@hamail.net',null);
+
+insert into professor
+values (2002,'Michelle Pfeiffer','Pfeiffer','assistant professor',350,to_date('1985-11-30','YYYY-MM-DD'),80,102,'number1@naver.com','http://num1.naver.com');
+
+insert into professor
+values (2003,'Whoopi Goldberg','Goldberg','a full professor',490,to_date('1982-04-29','YYYY-MM-DD'),90,102,'bdragon@naver.com',null);
+
+insert into professor
+values (3001,'Emma Thompson','Thompson','a full professor',530,to_date('1981-10-23','YYYY-MM-DD'),110,103,'angel1004@hanmir.com',null);
+
+insert into professor
+values (3002,'Julia Roberts','Roberts','assistant professor',330,to_date('1997-07-01','YYYY-MM-DD'),50,103,'naone10@empal.com',null);
+
+insert into professor
+values (3003,'Sharon Stone','Stone','instructor',290,to_date('2002-02-24','YYYY-MM-DD'),null,103,'only_u@abc.com',null);
+
+insert into professor
+values (4001,'Meryl Streep','Streep','a full professor',570,to_date('1981-10-23','YYYY-MM-DD'),130,201,'chebin@daum.net',null);
+
+insert into professor
+values (4002,'Susan Sarandon','Sarandon','assistant professor',330,to_date('2009-08-30','YYYY-MM-DD'),null,201,'gogogo@def.com',null);
+
+insert into professor
+values (4003,'Nicole Kidman','Kidman','assistant professor',310,to_date('1999-12-01','YYYY-MM-DD'),50,202,'mypride@hanmail.net',null);
+
+insert into professor
+values (4004,'Holly Hunter','Hunter','instructor',260,to_date('2009-01-28','YYYY-MM-DD'),null,202,'ironman@naver.com',null);
+
+insert into professor
+values (4005,'Meg Ryan','Ryan','a full professor',500,to_date('1985-09-18','YYYY-MM-DD'),80,203,'standkang@naver.com',null);
+
+insert into professor 
+values (4006,'Andie Macdowell','Macdowell','instructor',220,to_date('2010-06-28','YYYY-MM-DD'),null,301,'napeople@jass.com',null);
+
+insert into professor
+values (4007,'Jodie Foster','Foster','assistant professor',290,to_date('2001-05-23','YYYY-MM-DD'),30,301,'silver-her@daum.net',null);
+
+commit;
+
+drop table department purge;
+create table department
+( deptno number(3) primary key ,
+  dname varchar2(50) not null,
+  part number(3),
+  build  varchar2(30)) 
+tablespace example;
+
+insert into department 
+values (101,'Computer Engineering',100,'Information Bldg');
+
+insert into department
+values (102,'Multimedia Engineering',100,'Multimedia Bldg');
+
+insert into department
+values (103,'Software Engineering',100,'Software Bldg');
+
+insert into department
+values (201,'Electronic Engineering',200,'Electronic Control Bldg');
+
+insert into department
+values (202,'Mechanical Engineering',200,'Machining Experiment Bldg');
+
+insert into department
+values (203,'Chemical Engineering',200,'Chemical Experiment Bldg');
+
+insert into department
+values (301,'Library and Information science',300,'College of Liberal Arts');
+
+insert into department
+values (100,'Department of Computer Information',10,null);
+
+insert into department
+values (200,'Department of Mechatronics',10,null);
+
+insert into department
+values (300,'Department of Humanities and Society',20,null);
+
+insert into department
+values (10,'College of Engineering',null,null);
+
+insert into department
+values (20,'College of Liberal Arts',null,null);
+
+commit;
+ 
+ 
+ 
+-- 예제1
+select  p.profno as PROFESSOR_ID, p.name as PROFESSOR_NAME,
+case    when p.deptno = 101 then 'Computer Engineering'
+        else '.'
+        end DEPARTMENT_NAME
+from professor p
+left join department d on p.deptno = d.deptno;
+
+
+
+
+
+
+
+-- 120쪽
+create table student
+( studno number(4) primary key,
+  name   varchar2(30) not null,
+  id varchar2(20) not null unique,
+  grade number check(grade between 1 and 6),
+  jumin char(13) not null,
+  birthday  date,
+  tel varchar2(15),
+  height  number(4),
+  weight  number(3),
+  deptno1 number(3),
+  deptno2 number(3),
+  profno  number(4))
+tablespace example; 
+
+insert into student values (
+9411,'James Seo','75true',4,'7510231901813',to_date('1975-10-23','YYYY-MM-DD'),'055)381-2158',180,72,101,201,1001);
+
+insert into student values (
+9412,'Rene Russo','Russo',4,'7502241128467',to_date('1975-02-24','YYYY-MM-DD'),'051)426-1700',172,64,102,null,2001);
+
+insert into student values (
+9413,'Sandra Bullock','Bullock',4,'7506152123648',to_date('1975-06-15','YYYY-MM-DD'),'053)266-8947',168,52,103,203,3002);
+
+insert into student values (
+9414,'Demi Moore','Moore',4,'7512251063421',to_date('1975-12-25','YYYY-MM-DD'),'02)6255-9875',177,83,201,null,4001);
+
+insert into student values (
+9415,'Danny Glover','Glover',4,'7503031639826',to_date('1975-03-03','YYYY-MM-DD'),'031)740-6388',182,70,202,null,4003);
+
+insert into student values (
+9511,'Billy Crystal','Crystal',3,'7601232186327',to_date('1976-01-23','YYYY-MM-DD'),'055)333-6328',164,48,101,null,1002);
+
+insert into student values (
+9512,'Nicholas Cage','Cage',3,'7604122298371',to_date('1976-04-12','YYYY-MM-DD'),'051)418-9627',161,42,102,201,2002);
+
+insert into student values (
+9513,'Micheal Keaton','Keaton',3,'7609112118379',to_date('1976-09-11','YYYY-MM-DD'),'051)724-9618',177,55,202,null,4003);
+
+insert into student values (
+9514,'Bill Murray','Murray',3,'7601202378641',to_date('1976-01-20','YYYY-MM-DD'),'055)296-3784',160,58,301,101,4007);
+
+insert into student values (
+9515,'Macaulay Culkin','Culkin',3,'7610122196482',to_date('1976-10-12','YYYY-MM-DD'),'02)312-9838',171,54,201,null,4001);
+
+insert into student values (
+9611,'Richard Dreyfus','Dreyfus',2,'7711291186223',to_date('1977-11-29','YYYY-MM-DD'),'02)6788-4861',182,72,101,null,1002);
+
+insert into student values (
+9612,'Tim Robbins','Robbins',2,'7704021358674',to_date('1977-04-02','YYYY-MM-DD'),'055)488-2998',171,70,102,null,2001);
+
+insert into student values (
+9613,'Wesley Snipes','Snipes',2,'7709131276431',to_date('1977-09-13','YYYY-MM-DD'),'053)736-4981',175,82,201,null,4002);
+
+insert into student values (
+9614,'Steve Martin','Martin',2,'7702261196365',to_date('1977-02-26','YYYY-MM-DD'),'02)6175-3945',166,51,201,null,4003);
+
+insert into student values (
+9615,'Daniel Day-Lewis','Day-Lewis',2,'7712141254963',to_date('1977-12-14','YYYY-MM-DD'),'051)785-6984',184,62,301,null,4007);
+
+insert into student values (
+9711,'Danny Devito','Devito',1,'7808192157498',to_date('1978-08-19','YYYY-MM-DD'),'055)278-3649',162,48,101,null,null);
+
+insert into student values (
+9712,'Sean Connery','Connery',1,'7801051776346',to_date('1978-01-05','YYYY-MM-DD'),'02)381-5440',175,63,201,null,null);
+
+insert into student values (
+9713,'Christian Slater','Slater',1,'7808091786954',to_date('1978-08-09','YYYY-MM-DD'),'031)345-5677',173,69,201,null,null);
+
+insert into student values (
+9714,'Charlie Sheen','Sheen',1,'7803241981987',to_date('1978-03-24','YYYY-MM-DD'),'055)423-9870',179,81,102,null,null);
+
+insert into student values (
+9715,'Anthony Hopkins','Hopkins',1,'7802232116784',to_date('1978-02-23','YYYY-MM-DD'),'02)6122-2345',163,51,103,null,null);
+
+commit;
+
+select name, substr(jumin, 7, 1)  -- substr(jumin, 7)
+from student;
+
+select name, decode(substr(jumin, 7, 1) ,1, 'Man', 2, 'Woman')  -- substr(jumin, 7)
+from student;
+
+
+
+-- 퀴즈2
+select tel
+from student;
+
+
+select substr(tel, 1, 3)
+from student;
+
+
+-- instr : 특정문자의 위치를 구하기 
+-- (전화번호에서 추출할 개수를 구하기)
+select substr( tel,1, instr(tel, ') ')-1)
+from student;
+
+select decode( substr( tel, instr(tel, ',) ')-1) , '02', '서울', '031', '경기', '051', '부산', '052', '울산', '053', '경남')
+from student;
+
