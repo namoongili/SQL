@@ -1,0 +1,334 @@
+--210 페이지 1번
+select *
+from emp;
+
+select sal, comm, sal+comm
+from emp;
+
+--nvl 함수
+
+select comm, nvl(comm, 0)
+from emp;
+
+select sal, comm, sal + nvl(comm, 0)
+from emp;
+
+select max( sal + nvl(comm, 0))
+from emp;
+
+select min(sal + nvl(comm,0))
+from emp;
+
+select avg(sal + nvl(comm,0))
+from emp;
+
+--소수 첫째자리까지 날리기
+select round( avg(sal + nvl(comm,0)),1)
+from emp;
+
+--끝 ㅋㅋ
+select max( sal + nvl(comm, 0)) as MAX, min(sal + nvl(comm,0))as MIN, round( avg(sal + nvl(comm,0)),1)as AVG
+from emp;
+
+
+
+
+-- 조인하기
+-- 요구사항 : 주문정보 조회
+select * from tbl_test_order;
+select * from tbl_test_goods;
+
+select *
+from tbl_test_order o 
+join tbl_test_goods g
+on o.pcode = g.pcode;
+
+select c.name, o.sale_cnt
+from tbl_test_order o
+join tbl_test_goods g
+on o.pcode = g.pcode
+join tbl_test_customer c
+on o.id = c.id;
+
+select o.id, sum( o.sale_cnt ) as qty
+from tbl_test_order o 
+join tbl_test_goods g
+on o.pcode = g.pcode
+group by o.id
+order by qty desc;
+
+
+--1. 고객별 판매수량 구하기
+select c.name, sum(o.sale_cnt)
+from tbl_test_customer c
+join tbl_test_order o
+on o.id = c.id
+group by c.name
+order by c.name;
+
+--2. 고객별 판매수량 구하기(주문하지 않은 고객도 조회되게 하기)
+select c.name as 고객, count(o.sale_cnt) as 판매수량
+from tbl_test_customer c left outer join tbl_test_order o
+on c.id = o.id
+group by name;
+
+--3. 제품별 판매수량 구하기 
+
+--4. 제품별 판매금액 구하기
+
+--5. 고객별 판매금액 구하기
+
+
+
+--
+select * from tbl_test_order;
+select * from tbl_test_customer;
+
+-- equi 조인 (동등조인 : 조인시 같은 값을 기준으로 조인한다)
+-- inner 조인 (기본, 생략가능하다) : 양쪽 모두 존재할 때만 조인된다.
+
+select *
+from tbl_test_order o
+inner join tbl_test_customer c  --inner 생략가능
+on o.id = c.id;
+
+--2. 고객별 판매수량 구하기 ( 주문하지 않은 고객도 조회되게 하기)
+-- outer 조인
+-- left outer 조인
+-- right outer 조인
+-- full outer 조인
+
+select *
+from tbl_test_order o
+right outer join tbl_test_customer c --left는 왼쪽에서 남는걸 보여줌
+on o.id = c.id;
+
+
+--right outer join : 오른쪽 테이블에 일치하지 않았던 정보가 조회되도록 한다.
+
+
+--고객별 판매수량 합계
+select c.name, nvl (sum(o.sale_cnt),0)
+from tbl_test_order o
+right outer join tbl_test_customer c
+on o.id = c.id
+group by c.name;
+
+--존재하지 않는 고객 주문정보 추가하기 (--존재하지 않는 고객정보가 발생하면 안됨!! -실습을 위해서 추가)
+insert into tbl_test_order values('J009', '20211111','H007', 'P002', 4);
+commit;
+
+
+select * from tbl_test_order;
+select * from tbl_test_customer;
+
+select * from tbl_test_order o
+left outer join tbl_test_customer c
+on o.id = c.id;
+
+select * from tbl_test_order o
+left outer join tbl_test_customer c
+on o.id = c.id;
+
+--형변환함수
+
+--to_char(), 날짜를 원하는 형식, 숫자를 원하는 형식
+
+select sysdate from dual;
+select to_char (sysdate, 'YYYY-MM-DD day') from dual;
+select to_char (sysdate, 'YYYY-MM-DD dy') from dual;
+
+select to_char (12345, '999,999')from dual;
+select to_char (12345, 'L999,999')from dual;
+select to_char(m_point, '999,999')  from member_tbl_11;
+select to_char( m_point, '999,999')from member_tbl_11; -- 전체자리수에서 의미없는 0을 표시함
+
+--주의사항 : 자리수가 작으면 #######으로 표시됨
+
+--to_number() 숫자로 변환됨
+--'125' -> 125
+select to_number('125') +3 from dual; --128
+select '125' +3 from dual; --자동형변환 된 경우임
+
+--to_date() : 날짜형식으로 변경
+--'2024-09-05'  문자타입의 날짜를 -> 날짜형식으로 변환하는 함수
+
+select to_date('2024-09-05') from dual; --자동 형변환으로 제공됨
+select to_date('20240905', 'YYYY-MM-DD') from dual;
+
+--시 분 표시하기
+select to_char( to_date('0940', 'HH24MI'), 'HH24:MI') from dual;
+select substr('0940', 1, 2) || ':' || substr('0950 from dual);
+
+--dual 테이블
+-- 실제 데이터가 저장되는 것이 아니라, 단일 행과 단일 열을 가진 가상의 테이블입니다.
+-- 주로 SQL 문장을 테스트하거나 단일 값을 조회할 때 사용
+
+--교재 210페이지 2번 decode 함수를 활용해서 월별 생일자 수 구하기
+
+select * from student;
+select birthday from student;
+select to_char(birthday, 'MM') from student;
+
+--1월    2월  3월  4월
+--3     3      2    
+
+select decode( to_char(birthday, 'MM'), '01', '8' )from student;
+
+select count(decode( to_char(birthday, 'MM'), '01', '8' )) as JAN from student;
+
+--2월 생일자 수 구하기
+select to_char(birthday, 'MM') from student;
+select decode(to_char(birthday, 'MM'),'02','9') from student;  --2월을 9로 출력
+select count(decode(to_char(birthday,'MM'),'02','02')) as FEB from student;
+
+--3월 생일자 수 구하기
+select to_char(birthday, 'MM') from student;
+select decode(to_char(birthday, 'MM'), '03', '1') from student;
+select count(decode(to_char(birthday, 'MM'), '03', '1')) as MAR from student;
+
+select count(decode( to_char(birthday, 'MM'), '01', '8' )) || 'EA' as JAN,
+       count(decode( to_char(birthday, 'MM'), '02', '02')) as FEB ,
+       count(decode( to_char(birthday, 'MM'), '03', '1')) as MAR ,
+       count(decode( to_char(birthday, 'MM'), '04', 7)) as APR 
+from student;
+
+
+--4월생 수 구하기
+select to_char (birthday, 'MM') from student;
+select decode(to_char(birthday,'MM'), '04', 7) from student;
+select count (decode(to_char(birthday,'MM'), '04', 7)) as APR from student;
+
+--5월생 수 구하기
+select to_char (birthday, 'MM') from student;
+select decode(to_char(birthday,'MM'), '05', 6) from student;
+select count (decode(to_char(birthday,'MM'), '05',6)) as MAY from student;
+
+--6월생 수 구하기
+select to_char (birthday, 'MM') from student;
+select decode(to_char(birthday,'MM'), '06', 1) from student;
+select count (decode(to_char(birthday,'MM'), '06',1)) from student;
+
+--7월생 수 구하기
+select to_char (birthday, 'MM') from student;
+select decode(to_char(birthday, 'MM'), '07',3) from student;
+select count( decode(to_char
+
+
+--210쪽 3번
+select tel from student;
+select substr(tel,1,3) from student;  
+
+select tel, instr(tel, ')'), instr(tel, ')')-1, substr(tel,1,3) from student;
+select  instr(tel, ')')-1 from student;
+select substr(tel,1,  instr(tel, ')')-1) from student;
+
+--서울
+select decode(substr(tel,1,  instr(tel, ')')-1), '02', '02') from student;
+select count(decode(substr(tel,1,  instr(tel, ')')-1),'02', '02')) as "seoul" from student;
+
+--경기
+select tel from student;
+select substr(tel, 1, instr(tel, ')')-1) from student;
+
+select decode(substr(tel,1, instr(tel, ')')-1), '031', '9999')from student;
+select count( decode(substr(tel,1, instr(tel, ')')-1), '031', '9999')) as "경기" from student;
+
+select substr( tel,1,instr(tel, ')')-1) from student;
+
+select decode( substr( tel,1,instr(tel, ')')-1), '051', '051') from student;
+select count(decode( substr( tel,1,instr(tel, ')')-1), '051', '051')) as "부산" from student;
+
+select count(decode(substr(tel,1,  instr(tel, ')')-1),'02', '02')) as "seoul",
+       count( decode(substr(tel,1, instr(tel, ')')-1), '031', '9999')) as "경기",
+       count(decode( substr( tel,1,instr(tel, ')')-1), '051', '051')) as "부산" 
+from student;
+
+
+--4.
+select deptno, job, sal from emp;
+select deptno, decode(job, 'CLERK', sal, 0) , sal from emp;
+select deptno, decode(job, 'CLERK', sal, 0) from emp;
+select decode(job, 'CLERK', sal, 0) from emp;
+select sum(decode(job, 'CLERK', sal, 0)) from emp;
+
+select job, sal from emp;
+select decode(job, 'MANAGER', sal, 0) from emp;
+
+select sum(decode(job, 'MANAGER', sal, 0)) from emp;
+
+select job, sal from emp;
+select job, decode(job, 'SALESMAN', sal,0) from emp;
+select sum( decode(job, 'SALESMAN', sal,0)) from emp;
+
+select sum( decode(job, 'CLERK', sal, 0)) ,
+       sum( decode(job, 'MANAGER', sal, 0)) ,
+       sum( decode(job, 'SALESMAN', sal,0))
+from emp;
+
+select decode(job, 'CLERK', sal, 0) ,
+       decode(job, 'MANAGER', sal, 0) ,
+       decode(job, 'SALESMAN', sal,0)
+from emp;
+
+
+select deptno,
+       decode(job, 'CLERK', sal, 0) ,
+       decode(job, 'MANAGER', sal, 0) ,
+       decode(job, 'SALESMAN', sal,0)
+from emp;
+
+
+--부서별 직급별 급여합계
+select deptno,
+      sum( decode(job, 'CLERK', sal, 0)) ,
+      sum( decode(job, 'MANAGER', sal, 0)) ,
+      sum( decode(job, 'SALESMAN', sal,0))
+from emp
+group by deptno;
+
+select deptno, sal from emp;
+--전체 급여 합계
+select sum(sal) from emp;
+
+--부서별 급여 합계
+select deptno,sum( sal)
+from emp
+group by deptno;
+
+--
+select job, sal from emp;
+select deptno, job, decode(job, 'CLERK', sal, 0) from emp;
+select deptno, decode(job, 'CLERK', sal, 0) from emp;
+
+select deptno, sum(decode(job, 'CLERK', sal, 0)) from emp
+from emp
+group by deptno;
+
+select job, sal from emp;
+select job, decode(job, 'MANAGER', sal, 0) from emp;
+
+--그룹되기 전
+
+
+--
+select job, sal, from emp;
+--
+select job,decode(job, 'PRESIDENT', sal, 0) from emp;
+
+select deptno, sum(decode(job, 'PRESIDENT', sal, 0)) from emp
+group by deptno;
+
+-----------
+select deptno, AVG(NVL(sal,0)) "AVG"
+from emp
+group by deptno;
+
+select deptno, job, AVG(NVL(sal,0)) "AVG"
+from emp
+group by deptno, job;
+
+select deptno, job, AVG(NVL(sal,0)) "AVG"
+from emp
+group by deptno, job
+order by 1;
