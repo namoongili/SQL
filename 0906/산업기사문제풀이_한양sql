@@ -1,0 +1,102 @@
+create table goods_tbl_500(
+goods_cd varchar2(6) not null primary key, 
+goods_nm varchar2(30), 
+goods_price number(8), 
+cost number(8), in_date date
+); 
+
+
+insert into goods_tbl_500 values('110001','육계장사발면',1050,750,'20190302');
+insert into goods_tbl_500 values('110002','단팥빵',1300,800,'20190302'); 
+insert into goods_tbl_500 values('110003','사브로',2000,1700,'20190302');
+insert into goods_tbl_500 values('110004','칠성사이다',900,750,'20190302'); 
+insert into goods_tbl_500 values('110005','콜라',750,300,'20190302'); 
+insert into goods_tbl_500 values('110006','아몬드초콜릿',1500,1300,'20190302'); 
+insert into goods_tbl_500 values('110007','초코몽',850,600,'20190302');
+
+
+ create table store_tbl_500(
+ store_cd varchar2(5) not null primary key,
+ store_nm varchar2(20), 
+ store_fg varchar2(1)
+);
+
+ insert into store_tbl_500 values('A001','노원점','0');
+ insert into store_tbl_500 values('A002','마포점','0'); 
+insert into store_tbl_500 values('A003','석계점','0'); 
+insert into store_tbl_500 values('B001','하계점','1');
+ insert into store_tbl_500 values('C001','상계점','1'); 
+insert into store_tbl_500 values('D001','중계점','0');
+ insert into store_tbl_500 values('D002','태릉입구점','1'); 
+insert into store_tbl_500 values('E001','화랑대점','0');
+
+
+ create table sale_tbl_500(
+ sale_no varchar2(4) not null primary key, 
+ sale_ymd date not null,
+ sale_fg varchar2(1) not null, 
+ store_cd varchar2(5)  ,         
+ goods_cd varchar2(6) ,
+ sale_cnt number(3),
+ pay_type varchar2(2),
+ constraint  fk1 foreign key (store_cd)  references store_tbl_500(store_cd),
+ constraint  fk2  foreign key (goods_cd) references goods_tbl_500(goods_cd)
+); 
+
+insert into sale_tbl_500 values('0001','20190325','1','A001','110001',2,'02'); 
+insert into sale_tbl_500 values('0002','20190325','1','B001','110003',2,'02');
+ insert into sale_tbl_500 values('0003','20190325','1','D001','110003',1,'01'); 
+insert into sale_tbl_500 values('0004','20190325','1','A001','110006',5,'02'); 
+insert into sale_tbl_500 values('0005','20190325','1','C001','110003',2,'02'); 
+insert into sale_tbl_500 values('0006','20190325','2','C001','110003',2,'02');
+ insert into sale_tbl_500 values('0007','20190325','1','A002','110005',4,'02');
+ insert into sale_tbl_500 values('0008','20190325','1','A003','110004',4,'02');
+ insert into sale_tbl_500 values('0009','20190325','1','B001','110001',2,'01');
+ insert into sale_tbl_500 values('0010','20190325','1','A002','110006',1,'02');
+
+commit;
+
+
+
+select * from sale_tbl_500;
+select * from store_tbl_500;
+select * from goods_tbl_500;
+
+--1)
+select goods_cd, goods_nm, 
+to_char(goods_price, '99,999'),
+to_char(cost , '99,999'),
+to_char(in_date, 'yyyy-mm-dd')
+from goods_tbl_500;
+
+--2) 점포별 매출현황
+select store.store_nm, sale.pay  sum(sale.sale_cnt * g.goods_price)
+from sale_tbl_500 sale
+join store_tbl_500 store
+on sale.store_cd = store.store_cd
+join goods_tbl_500 g
+on sale.goods_cd = g.goods_cd;
+
+select store.store_nm, 
+to_char(sum(decode(pay_type, '01', sale.sale_cnt * g.goods_price, 0)), '999,999') as "ddd",
+to_char(sum(decode(pay_type, '02', sale.sale_cnt * g.goods_price, 0)), '999,999') as "card",
+to_char(sum( sale.sale_cnt * g.goods_price), '999,999') as total
+from sale_tbl_500 sale
+join store_tbl_500 store
+on sale.store_cd = store.store_cd
+join goods_tbl_500 g
+on sale.goods_cd = g.goods_cd
+group by store.store_nm
+order by 4 desc;
+
+
+--3
+select *
+from sale_tbl_500 sale
+
+
+select decode( sale.sale_fg, 1, '판매', 2, '취소' sale.sale_ymd, goods.goods_nm, goods.goods_price * sale.sale_cnt, decode( sale.pay_type, '01', '현금', '02', '카드' )
+from sale_tbl_500 sale
+join goods_tbl_500 goods
+on sale.goods_cd = goods.goods_cd
+where sale.goods_cd = 'A001';
