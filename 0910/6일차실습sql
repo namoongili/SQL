@@ -1,0 +1,43 @@
+create table student2(
+student_id number primary key,      --주키
+student_name varchar2(50) not null,
+email varchar2(100) unique          --후보키(대체키로 사용가능)
+);
+commit;
+    
+    
+--create table subject(
+--subject_id number primary key,      --주키
+--subject_name varchar2(50) not null,
+--subject_code varchar2(10) unique    --후보키
+--);
+--commit;
+
+desc student ;
+
+
+
+insert into student2 (student_id, student_name, email) values (1, '김길동', 'kimgildong@naver.com');
+insert into student2 (student_id, student_name, email) values (2, '이길동', 'leegildong@naver.com');
+insert into student2 (student_id, student_name, email) values (3, '박길동', 'parkgildong@naver.com');
+
+commit;
+
+
+select student_id, student_name, email
+from student2;
+
+
+select student_id, student_name, email  
+from student2
+where student_id = 1;                   --번호로 조회
+
+
+select student_id, student_name, email  
+from student2
+where email = 'parkgildong@naver.com';        --이메일롲 조회
+
+
+
+
+
